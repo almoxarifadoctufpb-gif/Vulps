@@ -1,1 +1,1957 @@
-# Vulps
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>CT Almox • UFPB</title>
+  <!-- Fonts e bibliotecas mantidas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    /* ===== CSS COMPLETO COM FONTE ESTILO NUBANK ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --ufpb-deep: #0A2F4D;
+      --ufpb-primary: #0B3B60;
+      --ufpb-secondary: #1E5A8D;
+      --orange-primary: #FF7A00;
+      --orange-dark: #E56A00;
+      --white: #FFFFFF;
+      --gray-100: #F8FAFE;
+      --gray-200: #E9EDF2;
+      --gray-600: #4B5563;
+      --gray-800: #1F2937;
+      --shadow-card: 0 20px 30px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 122, 0, 0.05);
+      --shadow-hover: 0 24px 36px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 122, 0, 0.2);
+      --border-radius-card: 28px;
+      --border-radius-btn: 60px;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      position: fixed;
+      background: radial-gradient(ellipse at 20% 30%, #CBE6F5, #A8CCE8);
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.5;
+      margin: 0;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .btn {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(145deg, #0A2F4D 0%, #0B3B60 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: opacity 0.6s;
+      pointer-events: none;
+      opacity: 1;
+    }
+    #splash.fade-out { opacity: 0; visibility: hidden; }
+    .splash-logo {
+      width: 160px;
+      height: 160px;
+      background: transparent;
+      margin-bottom: 28px;
+      animation: soft-float 2.2s infinite alternate;
+    }
+    .splash-logo img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2)); }
+    .splash-message {
+      color: white;
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 20px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .loader-modern {
+      width: 48px; height: 48px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top: 4px solid #FFFFFF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes soft-float { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+
+    #welcome-screen {
+      position: fixed;
+      inset: 0;
+      background: white;
+      z-index: 9500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s;
+      padding: 24px;
+    }
+    #welcome-screen.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .welcome-container {
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      animation: fadeSlideUp 0.6s ease-out;
+    }
+    .welcome-container img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.05));
+    }
+    .welcome-container h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ufpb-deep);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .welcome-container p {
+      font-size: 1rem;
+      color: var(--gray-600);
+      margin-bottom: 32px;
+      line-height: 1.5;
+      padding: 0 10px;
+      font-weight: 500;
+    }
+    .welcome-container .btn {
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      width: 100%;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #app {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(24px);
+      border-radius: 36px;
+      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.6);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+    }
+    #app.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    .app-header {
+      padding: 20px 22px 16px;
+      background: linear-gradient(135deg, #0A2F4D, #1E5A8D);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 0 0 32px 32px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .greeting-text {
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .icon-btn {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 40px;
+      cursor: pointer;
+      color: white;
+      font-size: 24px;
+      transition: 0.2s;
+    }
+    .icon-btn:hover { background: rgba(255,122,0,0.4); transform: scale(0.96); }
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      scrollbar-width: thin;
+    }
+    .bottom-nav {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.9);
+      padding: 8px 12px 18px;
+      display: flex;
+      justify-content: space-around;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+      padding: 8px 10px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: -0.01em;
+    }
+    .nav-item.active { background: linear-gradient(145deg, var(--ufpb-primary), var(--ufpb-secondary)); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .nav-item.active i { color: var(--orange-primary); }
+    .view { display: none; animation: fadeIn 0.3s ease; }
+    .view.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+
+    .card {
+      background: white;
+      border-radius: var(--border-radius-card);
+      padding: 22px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+      transition: 0.25s;
+    }
+    .card h2, .card h3 {
+      font-size: 1.45rem;
+      margin-bottom: 16px;
+      color: var(--ufpb-deep);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .info-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .info-list li {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+    .step-list {
+      list-style: none;
+      padding-left: 0;
+      counter-reset: step-counter;
+    }
+    .step-list li {
+      counter-increment: step-counter;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-weight: 500;
+    }
+    .step-list li::before {
+      content: counter(step-counter);
+      background: var(--orange-primary);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: linear-gradient(145deg, #0B3B60, #1E5A8D);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: var(--border-radius-btn);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .btn-primary { background: linear-gradient(145deg, var(--orange-primary), var(--orange-dark)); box-shadow: 0 6px 14px rgba(255,122,0,0.2); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(255,122,0,0.25); background: linear-gradient(145deg, #FF8C1A, #F05A00); }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--ufpb-primary);
+      color: var(--ufpb-primary);
+      box-shadow: none;
+    }
+    .btn-outline:hover { background: rgba(11,59,96,0.05); transform: translateY(-2px); border-color: var(--orange-primary); color: var(--orange-dark); }
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      box-shadow: 0 6px 14px rgba(37, 211, 102, 0.3);
+    }
+    .btn-whatsapp:hover {
+      background: #20B859;
+      transform: translateY(-2px);
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
+    .home-buttons-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .home-buttons-grid .btn {
+      justify-content: flex-start;
+      padding: 16px 24px;
+      font-size: 1.05rem;
+    }
+
+    .edu-carousel-container {
+      position: relative;
+      margin-top: 16px;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      background: white;
+    }
+    .edu-carousel-slides { display: flex; transition: transform 0.4s ease-out; }
+    .edu-carousel-slide {
+      min-width: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+    .edu-carousel-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background-color: #f0f4f9;
+      border-radius: 0;
+    }
+    .edu-carousel-content {
+      padding: 20px 20px 24px;
+    }
+    .edu-carousel-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--ufpb-deep);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .edu-carousel-text {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      margin-bottom: 20px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    .edu-saiba-mais {
+      background: transparent;
+      border: 1.5px solid var(--ufpb-primary);
+      color: var(--ufpb-primary);
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+      letter-spacing: -0.01em;
+    }
+    .edu-saiba-mais:hover { background: rgba(255,122,0,0.1); border-color: var(--orange-primary); color: var(--orange-dark); transform: translateY(-1px); }
+    .edu-carousel-dots { display: flex; justify-content: center; gap: 10px; padding: 14px 0 20px; background: white; }
+    .edu-dot { width: 8px; height: 8px; background: #cbd5e1; border-radius: 10px; transition: all 0.2s; cursor: pointer; }
+    .edu-dot.active { width: 28px; background: var(--orange-primary); }
+    .tabela-planilha-container { overflow-x: auto; border-radius: 20px; margin-top: 12px; }
+    .tabela-planilha { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 500px; }
+    .tabela-planilha th { background: linear-gradient(145deg, var(--ufpb-primary), var(--ufpb-secondary)); color: white; padding: 14px; text-align: left; font-weight: 600; letter-spacing: -0.01em; }
+    .tabela-planilha td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.7); cursor: pointer; transition: 0.1s; font-weight: 500; }
+    .tabela-planilha tr:hover td { background: #FFF3E6; }
+    .fila-item { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 5px solid var(--orange-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .stat-card { background: var(--gray-100); padding: 18px; border-radius: 24px; text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--ufpb-deep); letter-spacing: -0.02em; }
+    .metricas-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .metrica-card { background: var(--gray-100); border-radius: 24px; padding: 16px; text-align: center; }
+    .metrica-valor { font-size: 1.8rem; font-weight: 800; color: var(--ufpb-deep); letter-spacing: -0.02em; }
+    .search-modern { position: relative; margin-bottom: 20px; }
+    .search-modern i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--gray-600); font-size: 1rem; }
+    .rastreio-filtro { width: 100%; padding: 14px 18px 14px 48px; border-radius: 60px; border: 1.5px solid var(--gray-200); background: white; font-size: 0.95rem; outline: none; transition: 0.2s; font-weight: 500; }
+    .rastreio-filtro:focus { border-color: var(--orange-primary); box-shadow: 0 0 0 3px rgba(255,122,0,0.2); }
+    .whatsapp-float { position: fixed; bottom: 100px; left: 20px; z-index: 1500; background: #25D366; width: 58px; height: 58px; border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; text-decoration: none; box-shadow: 0 6px 14px rgba(0,0,0,0.2); transition: 0.2s; }
+    .whatsapp-float:hover { transform: scale(1.05); background: #20B859; }
+    
+    .location-float {
+      position: fixed;
+      bottom: 170px;
+      left: 20px;
+      z-index: 1500;
+      background: linear-gradient(145deg, #0A2F4D, #1E5A8D);
+      width: 58px;
+      height: 58px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 28px;
+      text-decoration: none;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+      transition: 0.2s;
+    }
+    .location-float:hover {
+      transform: scale(1.05);
+      background: linear-gradient(145deg, #1E5A8D, var(--orange-primary));
+    }
+    .location-float img {
+      width: 30px;
+      height: 30px;
+      filter: brightness(0) invert(1);
+    }
+    
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(145deg, #FFFFFF, #F8FAFE);
+      transform: translateX(100%);
+      transition: 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      border-radius: 36px 0 0 36px;
+      box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+    .cart-header { padding: 24px 24px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gray-200); }
+    .cart-header span { font-size: 1.6rem; font-weight: 700; color: var(--ufpb-deep); display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em; }
+    .cart-header span i { color: var(--orange-primary); }
+    #closeCartBtn { background: none; border: none; font-size: 32px; cursor: pointer; color: var(--gray-600); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    .cart-footer { padding: 20px 24px 30px; background: white; border-top: 1px solid var(--gray-200); border-radius: 32px 32px 0 0; }
+    .cart-footer input, .cart-footer select {
+      width: 100%; padding: 14px 18px; border-radius: 60px; border: 1.5px solid var(--gray-200);
+      background: white; font-size: 0.95rem; margin-bottom: 14px; outline: none; font-weight: 500;
+    }
+    .cart-footer input:focus, .cart-footer select:focus { border-color: var(--orange-primary); box-shadow: 0 0 0 3px rgba(255,122,0,0.2); }
+    .cart-footer .btn-primary { width: 100%; justify-content: center; padding: 15px; margin-top: 8px; }
+    .cart-badge { background: var(--orange-primary); color: white; border-radius: 40px; padding: 3px 10px; font-size: 12px; position: absolute; top: -6px; right: -6px; font-weight: bold; }
+    #toast-container { position: fixed; bottom: 100px; left: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: rgba(31,41,55,0.92); backdrop-filter: blur(12px); color: white; padding: 14px 20px; border-radius: 60px; font-weight:500; animation: slideIn 0.3s; pointer-events: none; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+    .modal-overlay { position: fixed; inset:0; background: rgba(0,20,40,0.5); backdrop-filter: blur(8px); z-index: 2500; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity:0; transition: 0.2s; }
+    .modal-overlay.active { visibility: visible; opacity:1; }
+    .modal-detalhes { background: white; border-radius: 32px; max-width: 360px; width: 90%; overflow: hidden; }
+    .modal-detalhes-header { background: linear-gradient(145deg, var(--ufpb-primary), var(--ufpb-secondary)); padding: 20px; color: white; }
+    .product-grid { display: flex; flex-direction: column; gap: 14px; max-height: 450px; overflow-y: auto; }
+    .product-card { display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.7); border-radius: 28px; padding: 14px; border: 1px solid rgba(255,255,255,0.8); }
+    .product-img { width: 70px; height: 70px; object-fit: contain; background: white; border-radius: 20px; padding: 8px; }
+    .category-grid { display: flex; justify-content: space-around; gap: 20px; margin: 20px 0 8px; }
+    .cat-circle-btn { background: linear-gradient(145deg, rgba(255,255,255,0.9), #F2F7FF); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.9); border-radius: 40px; padding: 18px 0; width: 110px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.03); font-weight: 600; }
+    .cat-circle-btn i { font-size: 40px; color: var(--ufpb-primary); margin-bottom: 10px; }
+    .cat-circle-btn:hover { transform: translateY(-4px); background: white; border-color: var(--orange-primary); box-shadow: 0 12px 20px rgba(0,0,0,0.08); }
+    .autocomplete-wrapper { position: relative; }
+    .autocomplete-items { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 24px; box-shadow: var(--shadow-card); max-height: 220px; overflow-y: auto; z-index: 100; border: 1px solid var(--gray-200); }
+    .autocomplete-item { padding: 12px 18px; cursor: pointer; border-bottom: 1px solid var(--gray-200); font-weight: 500; }
+    .autocomplete-item:hover { background: #FFE0B5; }
+    .modal-agua-card {
+      background: white;
+      border-radius: 40px;
+      max-width: 420px;
+      width: 90%;
+      padding: 28px 24px 32px;
+      box-shadow: 0 30px 40px -12px rgba(0, 35, 60, 0.35);
+    }
+    .modal-agua-card h3 { font-size: 1.8rem; font-weight: 700; color: var(--ufpb-deep); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em; }
+    .modal-agua-card .sub { color: var(--gray-600); font-size: 0.85rem; margin-bottom: 24px; border-left: 3px solid var(--orange-primary); padding-left: 12px; font-weight: 500; }
+    .modal-agua-card input, .modal-agua-card select {
+      width: 100%; padding: 14px 18px; border-radius: 60px; border: 1.5px solid var(--gray-200);
+      margin-bottom: 16px; outline: none; background: white; font-weight: 500;
+    }
+    .modal-agua-card input:focus, .modal-agua-card select:focus { border-color: var(--orange-primary); box-shadow: 0 0 0 3px rgba(255,122,0,0.2); }
+    .modal-agua-card .btn-group { display: flex; gap: 12px; margin-top: 20px; }
+    .modal-agua-card .btn { flex: 1; justify-content: center; padding: 14px 0; }
+    .mes-ano-group { display: flex; gap: 12px; }
+    .mes-ano-group select { flex: 1; }
+
+    #confirmacaoOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      z-index: 4000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.25s;
+    }
+    #confirmacaoOverlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .confirmacao-card {
+      background: white;
+      border-radius: 40px;
+      max-width: 380px;
+      width: 90%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 30px 40px -12px rgba(0, 35, 60, 0.3);
+      animation: fadeSlideUp 0.4s ease-out;
+    }
+    .confirmacao-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+    .confirmacao-card h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--ufpb-deep);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .confirmacao-card .subtitulo {
+      font-size: 1rem;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .confirmacao-card .mensagem {
+      background: var(--gray-100);
+      padding: 16px;
+      border-radius: 24px;
+      margin-bottom: 28px;
+      color: var(--gray-800);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .confirmacao-card .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .home-title {
+      text-shadow: 0 4px 12px rgba(0, 105, 180, 0.4);
+      color: #0077BE !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.03em !important;
+    }
+    .home-subtitle {
+      background: var(--orange-primary);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      backdrop-filter: blur(4px);
+      display: inline-block;
+      letter-spacing: -0.01em;
+    }
+    .estoque-card-moderno {
+      background: linear-gradient(135deg, #ffffff 0%, #f6faff 100%);
+      border-radius: 32px;
+      padding: 24px 20px;
+      box-shadow: 0 20px 30px -8px rgba(10,47,77,0.12);
+      border: 1px solid rgba(255,255,255,0.8);
+      margin-bottom: 24px;
+    }
+    .estoque-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .estoque-header i {
+      font-size: 2.2rem;
+      color: var(--orange-primary);
+      background: rgba(255,122,0,0.1);
+      padding: 12px;
+      border-radius: 20px;
+    }
+    .estoque-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .estoque-item {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 24px;
+      padding: 18px 12px;
+      text-align: center;
+      border: 1px solid rgba(10,47,77,0.08);
+    }
+    .estoque-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .estoque-valor {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--ufpb-deep);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .tabela-agua-moderna {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      margin-top: 8px;
+    }
+    .tabela-agua-moderna th {
+      text-align: left;
+      padding: 12px 8px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--ufpb-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid rgba(255,122,0,0.2);
+    }
+    .tabela-agua-moderna td {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(4px);
+      padding: 16px 8px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+      border: 1px solid rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+    .btn-pdf-modern {
+      background: white;
+      border: 1.5px solid var(--ufpb-primary);
+      color: var(--ufpb-primary);
+      padding: 12px 18px;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    .agua-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .rastreio-expand-row {
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 100%);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 10px 0;
+      border-left: 4px solid var(--orange-primary);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .rastreio-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .rastreio-detail-item {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .rastreio-detail-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .rastreio-detail-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ufpb-deep);
+    }
+    .setor-select {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 60px;
+      border: 1.5px solid var(--gray-200);
+      background: white;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+      outline: none;
+      font-weight: 500;
+    }
+    
+    p, li, span, div {
+      font-weight: 500;
+    }
+    .aviso-item {
+      padding: 12px;
+      background: rgba(255,122,0,0.05);
+      border-radius: 16px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .badge-validade {
+      background: var(--orange-primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div id="splash">
+  <div class="splash-logo"><img src="https://i.ibb.co/WN2005PY/logo.png" alt="Almoxarifado CT"></div>
+  <div class="splash-message">Almoxarifado CT-UFPB</div>
+  <div class="loader-modern"></div>
+</div>
+
+<div id="welcome-screen">
+  <div class="welcome-container">
+    <img src="https://cdn-icons-png.flaticon.com/512/11449/11449501.png" alt="Bem-vindo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+    <h2>Seja bem-vindo! 👋</h2>
+    <p>O aplicativo ainda está sendo finalizado, mas já pode te ajudar no dia a dia.</p>
+    <button class="btn btn-primary" id="btnEntrarApp">Entrar no App</button>
+  </div>
+</div>
+
+<div id="app">
+  <header class="app-header">
+    <div class="greeting-text" id="dynamicGreeting">Olá, Carregando...</div>
+    <div class="header-actions" style="display: flex; gap: 10px;">
+      <button id="helpBtn" class="icon-btn"><i class="fas fa-question"></i></button>
+      <button id="cartToggleBtn" class="icon-btn" style="position: relative;">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cartCountBadge" class="cart-badge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- VIEW HOME -->
+    <div id="view-home" class="view active">
+      <div style="display: flex; flex-direction: column; align-items: center; margin: 10px 0 12px;">
+        <img src="https://i.ibb.co/WN2005PY/logo.png" style="width: 140px; height: 140px; object-fit: contain;">
+        <h1 class="home-title" style="margin-top: 8px;">Bem-vindo ao AlmoxCT</h1>
+        <p class="home-subtitle">Solicite materiais, água, acompanhe pedidos</p>
+      </div>
+      <div class="card home-buttons-grid">
+        <button class="btn btn-primary" onclick="switchView('materiais')"><i class="fas fa-box"></i> Solicitar Materiais</button>
+        <button class="btn btn-outline" onclick="switchView('agua')"><i class="fas fa-water"></i> Solicitar Água</button>
+        <button class="btn btn-outline" onclick="switchView('publicidade')"><i class="fas fa-bullhorn"></i> Informações</button>
+        <button class="btn btn-outline" onclick="switchView('rastrear')"><i class="fas fa-truck"></i> Rastrear Material Permanente</button>
+      </div>
+      <div class="edu-carousel-container">
+        <div class="edu-carousel-slides" id="eduCarouselSlides"></div>
+        <div class="edu-carousel-dots" id="eduCarouselDots"></div>
+      </div>
+    </div>
+
+    <!-- VIEW ÁGUA -->
+    <div id="view-agua" class="view">
+      <div class="estoque-card-moderno" id="estoqueAguaCard">
+        <div class="estoque-header">
+          <i class="fas fa-boxes"></i>
+          <h3 style="margin:0; color:var(--ufpb-deep);">Estoque de Água</h3>
+        </div>
+        <div id="estoqueContent">
+          <div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-pulse"></i> Carregando estoque...</div>
+        </div>
+      </div>
+      <div class="card" style="padding:20px 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin:0;"><i class="fas fa-list-ul" style="color:var(--orange-primary);"></i> Fila de Solicitações</h3>
+          <button class="btn-pdf-modern" onclick="gerarPDFRelatorioAgua()"><i class="fas fa-file-pdf"></i> Baixar Relatório</button>
+        </div>
+        <div id="filaAguaTableContainer" style="overflow-x: auto;">
+          <div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-pulse"></i> Carregando fila...</div>
+        </div>
+      </div>
+      <div class="agua-actions">
+        <button class="btn btn-primary" style="flex:1;" onclick="openAguaSolicitacaoModal()"><i class="fas fa-plus-circle"></i> Solicitar Água</button>
+      </div>
+      <div style="height:10px;"></div>
+    </div>
+
+    <!-- VIEW MATERIAIS -->
+    <div id="view-materiais" class="view">
+      <div class="card">
+        <h3><i class="fas fa-cube"></i> Categorias</h3>
+        <div class="category-grid">
+          <div class="cat-circle-btn" onclick="showCategory('aula')"><i class="fas fa-chalkboard"></i><span>Aula</span></div>
+          <div class="cat-circle-btn" onclick="showCategory('expediente')"><i class="fas fa-pencil-alt"></i><span>Expediente</span></div>
+          <div class="cat-circle-btn" onclick="showCategory('limpeza')"><i class="fas fa-broom"></i><span>Limpeza</span></div>
+        </div>
+      </div>
+      <div id="categoryContainer" class="card" style="display: none;">
+        <div style="display: flex; justify-content: space-between;">
+          <h3 id="catTitle">Itens</h3>
+          <button id="closeCatBtn" style="background:none; border:none; font-size:28px;">&times;</button>
+        </div>
+        <div id="avisoLimpezaContainer"></div>
+        <div id="productList" class="product-grid"></div>
+      </div>
+    </div>
+
+    <!-- VIEW PUBLICIDADE (Informações) -->
+    <div id="view-publicidade" class="view">
+      <div class="card">
+        <h2><i class="fas fa-info-circle"></i> Sobre o Almoxarifado</h2>
+        <p>O Almoxarifado do CT/UFPB é responsável pelo recebimento, conferência, armazenamento e distribuição de materiais de consumo (expediente, limpeza, aula) e pelo controle de estoque de água mineral. Não realiza compras e não gerencia materiais permanentes (esses são controlados pelo Patrimônio).</p>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-clock"></i> Horário de Funcionamento</h2>
+        <ul class="info-list"><li><i class="fas fa-calendar-day"></i> Segunda a sexta-feira</li><li><i class="fas fa-hourglass-start"></i> 08h00 às 12h00</li><li><i class="fas fa-hourglass-end"></i> 13h00 às 17h00</li><li><i class="fas fa-ban"></i> Fechado aos sábados, domingos e feriados</li></ul>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-clipboard-list"></i> Como solicitar materiais</h2>
+        <ul class="step-list"><li>Acesse a aba <strong>Materiais</strong> e escolha a categoria.</li><li>Clique no botão <strong>"+"</strong> ao lado do item desejado.</li><li>Toque no ícone do carrinho, ajuste as quantidades.</li><li>Preencha todos os campos do formulário.</li><li>Clique em <strong>"Finalizar Pedido"</strong>.</li></ul>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-gavel"></i> Regras importantes</h2>
+        <ul class="info-list"><li><i class="fas fa-check-circle"></i> Pedidos analisados conforme disponibilidade.</li><li><i class="fas fa-hourglass-half"></i> Prazo de até 48 horas úteis.</li><li><i class="fas fa-water"></i> Água requer devolução do garrafão vazio.</li><li><i class="fas fa-ban"></i> Materiais permanentes devem ser solicitados ao Patrimônio.</li></ul>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-phone-alt"></i> Contato</h2>
+        <ul class="info-list"><li><i class="fab fa-whatsapp"></i> WhatsApp: (83) 3216-7082</li><li><i class="fas fa-envelope"></i> E-mail: almoxarifado@ct.ufpb.br</li><li><i class="fas fa-map-marker-alt"></i> Bloco da Administração do CT</li></ul>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-chart-line"></i> Indicadores Gerais</h2>
+        <canvas id="consumoChart" width="400" height="200" style="max-height:200px; width:100%;"></canvas>
+        <h3 style="margin-top: 20px;">Itens mais solicitados</h3>
+        <ul id="topItensList" style="list-style:none; padding:0;"></ul>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-database"></i> Movimentação de Materiais</h2>
+        <div class="metricas-grid" id="metricasPlanilha"><div class="metrica-card"><div class="metrica-valor" id="entradaPerm">--</div><div class="metrica-label">Entrada de Permanente</div></div><div class="metrica-card"><div class="metrica-valor" id="saidaPerm">--</div><div class="metrica-label">Saída de Permanente</div></div><div class="metrica-card"><div class="metrica-valor" id="saidaExpediente">--</div><div class="metrica-label">Saída de Expediente</div></div></div>
+      </div>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;"><h2><i class="fas fa-table"></i> Saiba mais:</h2><button class="btn" style="padding: 8px 16px;" onclick="baixarPDFPlanilhaPublicidade()"><i class="fas fa-file-pdf"></i> PDF</button></div>
+        <div class="search-modern"><i class="fas fa-search"></i><input type="text" id="filtroPlanilhaPublicidade" class="rastreio-filtro" placeholder="Buscar na planilha..."></div>
+        <div id="tabelaPlanilhaPublicidade" class="tabela-planilha-container"><div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div></div>
+      </div>
+      <div class="card">
+        <h2><i class="fas fa-bullhorn"></i> Avisos</h2>
+        <div class="aviso-item"><i class="fas fa-sync-alt"></i> Atualização de estoque em tempo real</div>
+        <div class="aviso-item"><i class="fas fa-box-open"></i> Novos materiais disponíveis</div>
+        <div class="aviso-item"><i class="fas fa-chart-line"></i> Sistema em melhoria contínua</div>
+      </div>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;"><h2><i class="fas fa-clock"></i> Fila de Espera - Solicitações de Água</h2><button class="btn" style="padding: 8px 16px;" onclick="baixarPDFFilaAgua()"><i class="fas fa-file-pdf"></i> PDF Fila</button></div>
+        <div id="filaAguaContainer"><div style="text-align:center;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div></div>
+      </div>
+      <button class="btn btn-outline" style="width:100%; margin-bottom: 20px;" onclick="atualizarDashboard()"><i class="fas fa-sync-alt"></i> Atualizar Todos os Dados</button>
+    </div>
+
+    <!-- VIEW OUVIDORIA -->
+    <div id="view-ouvidoria" class="view"><div class="card"><h2><i class="fas fa-bullhorn"></i> Ouvidoria</h2><p>Envie sua manifestação</p><form onsubmit="return false;"><input type="text" id="ouvNome" placeholder="Nome (opcional)" style="width:100%; padding:14px; border-radius:40px; margin:8px 0;"><div class="autocomplete-wrapper"><input type="text" id="ouvSetor" placeholder="Setor / Local" style="width:100%; padding:14px; border-radius:40px; margin:8px 0;"><div id="setorAutocompleteList" class="autocomplete-items" style="display:none;"></div></div><textarea id="ouvDesc" placeholder="Descrição (obrigatório)" rows="3" style="width:100%; padding:14px; border-radius:28px; margin:8px 0;"></textarea><div class="star-rating"><span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span></div><label><input type="checkbox" id="ouvInfoTrue"> Declaro que as informações são verdadeiras</label><label><input type="checkbox" id="ouvAnonimo"> Aceito envio anônimo</label><button type="button" class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="enviarOuvidoria()"><i class="fas fa-paper-plane"></i> Enviar</button></form></div></div>
+
+    <!-- VIEW RASTREAR -->
+    <div id="view-rastrear" class="view"><div class="card"><div style="display: flex; justify-content: space-between; align-items: center;"><h2><i class="fas fa-truck"></i> Rastrear Material Permanente</h2><button class="btn" style="padding: 8px 16px;" onclick="baixarPDFRastrear()"><i class="fas fa-file-pdf"></i> PDF</button></div><p style="margin: 12px 0;">Consulte a planilha oficial de materiais permanentes do CT. Clique em qualquer linha para ver detalhes.</p><div class="search-modern"><i class="fas fa-search"></i><input type="text" id="filtroPlanilha" class="rastreio-filtro" placeholder="Buscar por descrição, tombo, local..."></div><div id="tabelaPlanilhaContainer" class="tabela-planilha-container"><div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div></div></div></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="home"><i class="fas fa-home"></i><span>Início</span></button>
+    <button class="nav-item" data-view="agua"><i class="fas fa-water"></i><span>Água</span></button>
+    <button class="nav-item" data-view="materiais"><i class="fas fa-cube"></i><span>Materiais</span></button>
+    <button class="nav-item" data-view="publicidade"><i class="fas fa-bullhorn"></i><span>Info</span></button>
+    <button class="nav-item" data-view="rastrear"><i class="fas fa-truck"></i><span>R. Perm.</span></button>
+    <button class="nav-item" data-view="ouvidoria"><i class="fas fa-headset"></i><span>Ouvidoria</span></button>
+  </nav>
+</div>
+
+<div id="confirmacaoOverlay">
+  <div class="confirmacao-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/11805/11805386.png" alt="Confirmação">
+    <h2>Pedido pronto! ✅</h2>
+    <p class="subtitulo">Agora é só confirmar o envio.</p>
+    <div class="mensagem">
+      Obrigado por utilizar o app!<br>
+      Se quiser, você pode nos enviar sua avaliação pelo WhatsApp 💬
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" id="confirmarEnvioBtn">Enviar pedido</button>
+      <button class="btn btn-outline" id="falarWhatsappBtn"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</button>
+      <button class="btn" style="background:transparent; color:var(--gray-600); box-shadow:none;" id="cancelarConfirmacaoBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<a href="https://wa.me/558332167082" target="_blank" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+<a href="https://www.google.com/maps/place/ALMOXARIFADO+CT,+UFPB/@-7.1438069,-34.8534267,17z/data=!3m1!4b1!4m6!3m5!1s0x7acc3379766945d:0x798a73264dc6314d!8m2!3d-7.1438069!4d-34.8508518!16s%2Fg%2F11j12tnyfm?entry=ttu&g_ep=EgoyMDI2MDQxNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="location-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/5837/5837790.png" alt="Localização" onerror="this.innerHTML='<i class=\'fas fa-map-marker-alt\'></i>';this.style.fontSize='28px';">
+</a>
+
+<div id="cartDrawer" class="cart-drawer">
+  <div class="cart-header"><span><i class="fas fa-shopping-cart"></i> Carrinho</span><button id="closeCartBtn">&times;</button></div>
+  <div class="cart-items" id="cartItemsList"></div>
+  <div class="cart-footer">
+    <select id="carrinhoSetorSelect" class="setor-select">
+      <option value="">Selecione o setor de destinação *</option>
+    </select>
+    <input type="text" id="solicitanteNome" placeholder="Nome completo *">
+    <input type="tel" id="solicitanteTelefone" placeholder="Telefone/WhatsApp *">
+    <input type="email" id="solicitanteEmail" placeholder="E-mail *">
+    <select id="solicitanteVinculo"><option value="">Vínculo *</option><option>Aluno</option><option>Professor</option><option>Técnico-Administrativo</option></select>
+    <button class="btn btn-primary" onclick="finalizarPedido()">Finalizar Pedido</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
+<div id="toast-container"></div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ========== CONFIGURAÇÕES E DADOS ==========
+    const API_BASE = 'https://sheetdb.io/api/v1/z99orh1tqpetj';
+    const API_NOVA = 'https://script.google.com/macros/s/AKfycbyJemoPUR4i_DyUAJToPeD5ihUpq6m1Dm8hIbSpdm8nVcK2dD7GmnJTLV0jJV_iDclN/exec';
+    const WHATSAPP_NUMBER = '558332167082';
+    
+    const SETORES = [
+      "Laboratório de Acessibilidade - LACESSE", "Laboratório de Ambiente Urbano e Edificado – LAURBE", "Laboratório de Conforto Ambiental - LABCON", "Laboratório de Estudos sobre Cidade, Cultura e Urbanidade - LECCUR", "Laboratório de Modelos e Prototipagem", "Laboratório de Pesquisa, Projeto e Memória - LPPM", "Laboratório de Análise Sensorial e Desenvolvimento de Novos Produtos - LAS", "Laboratório de Análises de Ácidos Graxos - LAAG", "Laboratório de Análises Químicas de Alimentos - LAQA", "Laboratório de Apoio - LA", "Laboratório de Bioquímica de Alimentos - LBA", "Laboratório de Engenharia de Alimentos - LEA", "Laboratório de Flavor - LAF", "Laboratório de Informática - LI", "Laboratório de Microbiologia de Alimentos - LAMICRO", "Laboratório de Processamento de Derivados de Carnes - LPDC", "Laboratório de Processamento de Derivados do Leite - LPDL", "Laboratório de Processamento de Derivados de Pescado - LABTEC", "Laboratório de Processos Microbianos em Alimentos - LPMA", "Laboratório de Tecnologia de Alimentos - LTA", "Laboratório de Tecnologia de Panificação (Padaria Piloto) - LTP", "Laboratório de Análise Estrutural e Avaliação de Desempenho", "Laboratório de Análises Computacionais em Meio Ambiente", "Laboratório de Eficiência Energética e Hidráulica em Saneamento – LENHS", "Laboratório de Ensaios de Materiais e Estruturas - LABEME", "Laboratório de Geotecnia e Pavimentação – LAPAV", "Laboratório de Hidráulica", "Laboratório de Modelagem da Informação da Construção e Experimentação de Estruturas", "Laboratório de Modelos Físicos Qualitativos e Computacionais - LAMFIC", "Laboratório de Pesquisa em Sistemas Ambientais Urbanos - LPSAU", "Laboratório de Planejamento de Transportes", "Laboratório de Química Ambiental", "Laboratório de Recursos Hídricos e Engenharia Ambiental - LARHENA", "Laboratório de Reologia", "Laboratório de Saneamento Ambiental - LABSAM", "Laboratório de Topografia – LABTOP", "Laboratório de Caracterização Microestrutural", "Laboratório de Cristalografia", "Laboratório de Materiais Avançados", "Laboratório de Materiais Cerâmicos", "Laboratório de Materiais e Biossistemas", "Laboratório de Materiais Metálicos", "Laboratório de Modelagem de Materiais", "Laboratório de Propriedades Mecânicas dos Materiais", "Laboratório de Purificação e Aspersão de Minerais Argilosos", "Laboratório de Química dos Materiais", "Laboratório de Siderurgia", "Laboratório de Análise do Trabalho - LAT", "Laboratório de Desenvolvimento de Produtos e Inovação - LADEPI", "Laboratório de Engenharia de Sustentabilidade e Consumo - LabESC", "Laboratório de Informática - INFOLAB", "Laboratório de Métodos Quantitativos Aplicados - LabMeQA", "Laboratório de Simulação de Processo Discreto - LabSim", "Laboratório de Acionamentos e Comandos Hidropneumáticos", "Laboratório de Atividades Meteorológicas", "Laboratório de Automação e Controle", "Laboratório de Carvão Ativado", "Laboratório de Conformação Mecânica", "Laboratório de Controle de Vibração e Ruído", "Laboratório de Dinâmica", "Laboratório de Energia Sustentável", "Laboratório de Engenharia de Precisão", "Laboratório de Ensaios Mecânicos", "Laboratório de Inovação e Conversão Térmica", "Laboratório de Instrumentação e Controle", "Laboratório de Integridade e Inspeção", "Laboratório de Máquinas e Acionamentos Elétricos", "Laboratório de Materiais e Produtos Cerâmicos", "Laboratório de Mecatrônica", "Laboratório de Metalografia", "Laboratório de Metrologia Dimensional – Metromec", "Laboratório de Motores de Combustão Interna", "Laboratório de Oficina Mecânica", "Laboratório de Refrigeração e Ar-condicionado", "Laboratório de Representação Gráfica", "Laboratório de Solidificação Rápida", "Laboratório de Transferência de Calor e Massa", "Laboratório de Tratamento Térmico", "Laboratório de Análise e Processamento de Dados", "Laboratório de Análises e Pesquisas de Bebidas Alcoólicas - LBA", "Laboratório de Bioengenharia - LABIO", "Laboratório de Cromatografia e Quimiometria", "Laboratório de Fenômenos de Transporte - LFT", "Laboratório de Fluidodinâmica e Secagem", "Laboratório de Microbiologia Industrial", "Laboratório de Modelagem e Simulação de Processos", "Laboratório de Operações Unitárias - LOU", "Laboratório de Petróleo - LAPET", "Laboratório de Processamento Mineral", "Laboratório de Produtos Fermentados e Destilados - LPFD", "Laboratório de Reatores Químicos - LRQ", "Laboratório de Tecnologia Cosmética - LTC", "Laboratório de Tecnologia Química - LTQ", "Laboratório de Termodinâmica", "Laboratório Piloto de Química - LAPQ", "Arquitetura e Urbanismo - PPGAU", "Ciência e Tecnologia de Alimentos - PPGCTA", "Ciência e Engenharia de Materiais - PPCEM", "Engenharia Civil e Ambiental - PPGECAM", "Engenharia de Produção e Sistemas - PPGEPS", "Engenharia Mecânica - PPGEM", "Engenharia Química - PPGEQ", "Arquitetura e Urbanismo - CCAU", "Engenharia Ambiental - CCEAM", "Engenharia Civil - CCGEC", "Engenharia de Alimentos - CGCEA", "Engenharia de Materiais - CGEMAT", "Engenharia de Produção - CGEP", "Engenharia de Produção Mecânica - CGEPM", "Engenharia Mecânica - CCGEM", "Engenharia Química - CGCEQ", "Química Industrial - CGCQI", "Manutenção da Infraestrutura", "Patrimônio", "Informática", "Serviços Gerais", "Almoxarifado", "Aquisições e Contratos", "Documentação e Arquivo", "Gestão de Pessoas", "Logística", "Direção de Centro", "Secretaria do CT", "Comunicação Institucional", "Assessorias", "Empresa Júnior de Engenharia de Materiais - Caracterizze", "Empresa Júnior de Engenharia Ambiental - ECO's", "Empresa Júnior de Engenharia de Alimentos - ENGAJA", "Empresa Júnior de Engenharia Mecânica - Mottora", "Empresa Júnior de Engenharia de Produção - OTIMIZE", "Empresa Júnior de Arquitetura e Engenharia Civil - PLANEJ", "Empresa Júnior de Engenharia Química - PROJEQ"
+    ];
+    
+    const produtosData = {
+      aula: [
+        { nome: "APAGADOR PARA QUADRO BRANCO, BASE DE PLÁSTICO, 15X6X4 CM", cod: "3016000006065", img: "https://http2.mlstatic.com/D_NQ_NP_679212-MLA93659540174_102025-O.webp" },
+        { nome: "APAGADOR PARA QUADRO NEGRO", cod: "3016000005858", img: "https://http2.mlstatic.com/D_NQ_NP_870950-MLA100111327049_122025-O.webp" },
+        { nome: "MARCADOR AZUL PARA QUADRO BRANCO, RECARREGÁVEL", cod: "3016000005795", img: "https://framepapelaria.cdn.magazord.com.br/img/2024/05/produto/22700/marcador-quadro-branco-recarregavel-com-refil-brw-azul-2.png" },
+        { nome: "MARCADOR PRETO PARA QUADRO BRANCO, RECARREGÁVEL", cod: "3016000005771", img: "https://framepapelaria.cdn.magazord.com.br/img/2024/05/produto/22701/marcador-quadro-branco-recarregavel-com-refil-brw-pretos-2.png" },
+        { nome: "MARCADOR VERMELHO PARA QUADRO BRANCO, RECARREGÁVEL", cod: "3016000005783", img: "https://framepapelaria.cdn.magazord.com.br/img/2024/05/produto/22702/marcador-quadro-branco-recarregavel-com-refil-brw-vermelho-2.png" },
+        { nome: "PAPEL A4 (USO DIÁRIO) 75G/M COR BRANCA, (RESMA)", cod: "3016000006035", img: "https://http2.mlstatic.com/D_Q_NP_2X_752559-MLB78302167532_082024-P.webp" },
+        { nome: "REFIL DE TINTA AZUL P/ MARCADOR QUADRO BRANCO", cod: "3016000006159", img: "https://images.tcdn.com.br/img/img_prod/1130048/tinta_refil_para_marcador_de_quadro_branco_20ml_brw_2575_1_7c293183935c4cbd3fe76c17742e6501.jpg" },
+        { nome: "REFIL DE TINTA PRETO P/ MARCADOR QUADRO BRANCO", cod: "3016000006161", img: "https://images.tcdn.com.br/img/img_prod/1130048/tinta_refil_para_marcador_de_quadro_branco_20ml_brw_2575_1_7c293183935c4cbd3fe76c17742e6501.jpg" },
+        { nome: "REFIL DE TINTA VERMELHO P/ MARCADOR QUADRO BRANCO", cod: "3016000006162", img: "https://images.tcdn.com.br/img/img_prod/1130048/tinta_refil_para_marcador_de_quadro_branco_20ml_brw_2575_1_7c293183935c4cbd3fe76c17742e6501.jpg" }
+      ],
+      expediente: [
+        { nome: "CANETA ESFEROGRÁFICA AZUL ESCRITA FINA", cod: "3016000006355", img: "https://images.tcdn.com.br/img/img_prod/1249456/180_kit_3_canetas_esferograficas_azul_preta_vermelha_0_7mm_compactor_13157_1_5a74f695d92df58e1848333baf491de8.png" },
+        { nome: "CANETA ESFEROGRÁFICA PRETA ESCRITA FINA", cod: "3016000006151", img: "https://images.tcdn.com.br/img/img_prod/1249456/180_kit_3_canetas_esferograficas_azul_preta_vermelha_0_7mm_compactor_13157_1_5a74f695d92df58e1848333baf491de8.png" },
+        { nome: "CANETA ESFEROGRÁFICA VERMELHA ESCRITA FINA", cod: "3016000006155", img: "https://images.tcdn.com.br/img/img_prod/1249456/180_kit_3_canetas_esferograficas_azul_preta_vermelha_0_7mm_compactor_13157_1_5a74f695d92df58e1848333baf491de8.png" },
+        { nome: "COPO DESCARTÁVEL 180 ML", cod: "3021000001835", img: "https://static.clickembalagens.com.br/product_images/1280x1280/a/249/157390-20-02-2025-anuncio-20copo-20transparente-20180ml-20cx-201-20-36852.png" },
+        { nome: "RÉGUA EM POLIESTIRENO TRANSPARENTE 30 CM", cod: "3016000005861", img: "https://images.tcdn.com.br/img/img_prod/1055332/kit_03_reguas_30cm_poliestireno_transparente_cristal_acrimet_6057_1_fdb741d943f68b6de8cf94c58014d728.jpg" },
+        { nome: "PASTA COM ABA E ELÁSTICO AZUL", cod: "3016000006331", img: "https://img.kalunga.com.br/fotosdeproduto/591122z_1.jpg" },
+        { nome: "LÁPIS GRAFITE PRETO 6B", cod: "3016000005991", img: "https://http2.mlstatic.com/D_NQ_NP_991319-MLB89538300971_082025-O.webp" },
+        { nome: "FITA ADESIVA 48MM X 50M TRANSPARENTE", cod: "3016000006465", img: "https://cdn.awsli.com.br/600x1000/1279/1279016/produto/155175143/fita-adesiva-polipropileno-48mm-x-100m-transparente---unidade-1_clipped_rev_1-aam79ql1n8.jpeg" },
+        { nome: "FITA ADESIVA TRANSPARENTE 12MM X 30M", cod: "3016000005712", img: "https://www.papelariaartnova.com.br/img/products/1624/001624-01.webp" },
+        { nome: "GRAMPO 26/6", cod: "3016000006465", img: "https://cdn.awsli.com.br/800x800/2296/2296124/produto/189853573aef4990073.jpg" },
+        { nome: "ENVELOPE KRAFT 260X360 (PACOTE 100)", cod: "3016000006221", img: "https://images.tcdn.com.br/img/img_prod/1226139/envelope_saco_kraft_natural_260x360_80g_cx_c_100_un_scrity_skn336_2491_1_6f20d263b8ccb6d41156dcba206853dd.jpg" },
+        { nome: "CLIPE 6/0 CAIXA 50 UNIDADES", cod: "3016000005722", img: "https://images.tcdn.com.br/img/img_prod/1247900/clips_galvanizador_6_0_acc_cx_100_unidades_819_1_d76c21bbc48c7106f29678d81e742570.jpg" },
+        { nome: "COLA BRANCA 90G", cod: "3016000005751", img: "https://http2.mlstatic.com/D_855934-MLB44588073766_012021-C.jpg" },
+        { nome: "MARCA-TEXTO AMARELO", cod: "3016000006194", img: "https://http2.mlstatic.com/D_NQ_NP_2X_847809-MLU73000892446_112023-T.webp" },
+        { nome: "BORRACHA BRANCA C/ CAPA", cod: "3016000005703", img: "https://s3.amazonaws.com/lepok.w/produtos/produtos/04319_3.webp" },
+        { nome: "GUARDANAPO FOLHA SIMPLES PCT 50", cod: "3019000001239", img: "https://d2b87uj3x7g67r.cloudfront.net/Custom/Content/Products/46/74/46745_guardanapo-folha-simples-ripz-22x20-com-50-folhas_m2_638877942219209609.webp" },
+        { nome: "PILHA AA CARTELA 2UN", cod: "3026000006943", img: "https://bravalumi.cdn.magazord.com.br/img/2022/11/produto/6545/pilha-alcalina-elgin-aa-1-5v-cartela-com-2-unidades.png" },
+        { nome: "PILHA AAA CARTELA 2UN", cod: "3026000006943", img: "https://carrefourbr.vtexassets.com/arquivos/ids/197871627/image-0.jpg" },
+        { nome: "FÓSFORO PALITOS LONGOS CX 200", cod: "3021000001901", img: "https://cdn.irmaospatrocinio.com.br/img/p/1/7/5/7/2/0/175720-large_default.jpg" }
+      ],
+      limpeza: [
+        { nome: "VASSOURA DE PIAÇAVA PEQUENA", cod: "3022000002025", img: "https://http2.mlstatic.com/D_NQ_NP_863010-MLB90360069906_082025-O.webp" },
+        { nome: "ÁCIDO MURIÁTICO 1L", cod: "3022000002193", img: "https://images.tcdn.com.br/img/img_prod/945332/180_acido_muriatico_ph_menos_1_lt_6669_1_1ad1345a875248c4af79f1574f315cfa.png" },
+        { nome: "DESINFETANTE EUCALIPTO 1L", cod: "3022000002076", img: "https://down-br.img.susercontent.com/file/sg-11134201-7rdvv-lz0jw916cotmf8" },
+        { nome: "DISPENSER PAPEL TOALHA", cod: "3022000002194", img: "https://http2.mlstatic.com/D_658608-MLA100116120875_122025-C.jpg" },
+        { nome: "DISPENSER SABONETE/ÁLCOOL", cod: "3022000002075", img: "https://cdn.awsli.com.br/1539/1539771/produto/57897677/a117723c73.jpg" },
+        { nome: "ESCOVA DE MÃO OVAL", cod: "3022000002010", img: "https://http2.mlstatic.com/D_NQ_NP_861811-MLA99404882146_112025-O.webp" },
+        { nome: "ESPONJA DUPLA FACE PCT 3UN", cod: "3022000002014", img: "https://superprobettanin.com.br/wp-content/uploads/2022/06/Esponja-300x277.webp" },
+        { nome: "FLANELA ALVEJADA LARANJA", cod: "3022000002103", img: "https://http2.mlstatic.com/D_NQ_NP_667855-MLA99354439594_112025-O.webp" },
+        { nome: "LIMPADOR DE VIDROS 500ML", cod: "3022000002256", img: "https://www.papelplasticoecia.com.br/product_images/p/456/4536-09160-21920_zoom.jpg" },
+        { nome: "LIXEIRA PLÁSTICA 10L", cod: "3022000002168", img: "https://http2.mlstatic.com/D_NQ_NP_887965-MLA99874014347_112025-O.webp" },
+        { nome: "PANO DE CHÃO ALGODÃO CRU", cod: "3022000002269", img: "https://cdn.awsli.com.br/300x300/2732/2732782/produto/264038724/pano-de-chao-30-batidas-9rwoni86cx.jpg" },
+        { nome: "PAPEL HIGIÊNICO 300M PCT 8", cod: "3022000002048", img: "https://static.clickembalagens.com.br/product_images/292x284/b/068/135911-19-02-2025-anuncio-20papel-20hig-20rolao-20luxo-201-20-23241.png" },
+        { nome: "PAPEL HIGIÊNICO PCT 4 ROLOS 30M", cod: "3022000002332", img: "https://cdn.awsli.com.br/600x1000/2714/2714296/produto/300554777/design-sem-nome---2024-09-04t181454-642-jz82eth0nc.png" },
+        { nome: "SABÃO EM PÓ 1KG", cod: "3022000002065", img: "https://down-br.img.susercontent.com/file/sg-11134201-7rbka-m5ecuxrbv7ta3a" },
+        { nome: "SOLUÇÃO LIMPEZA MULTIUSO 500ML", cod: "3022000002056", img: "https://imgs.casasbahia.com.br/1580234225/3xg.jpg?imwidth=500" },
+        { nome: "SACO PLÁSTICO 100L PRETO", cod: "3022000002030", img: "https://cdn.awsli.com.br/600x450/1131/1131299/produto/231389072/saco-lixo-leve-hsupmlgb5c.jpg" },
+        { nome: "SACO PLÁSTICO 30L PRETO", cod: "3022000002031", img: "https://cdn.awsli.com.br/600x450/1131/1131299/produto/231389072/saco-lixo-leve-hsupmlgb5c.jpg" },
+        { nome: "SACO PLÁSTICO 200L PRETO", cod: "3022000002032", img: "https://cdn.awsli.com.br/600x450/1131/1131299/produto/231389072/saco-lixo-leve-hsupmlgb5c.jpg" },
+        { nome: "SACO PLÁSTICO 15L PRETO", cod: "3022000002030", img: "https://cdn.awsli.com.br/600x450/1131/1131299/produto/231389072/saco-lixo-leve-hsupmlgb5c.jpg" },
+        { nome: "LUVA LIMPEZA CANO CURTO M", cod: "3028000001058", img: "https://http2.mlstatic.com/D_NQ_NP_726579-MLB53878690909_022023-O.webp" }
+      ]
+    };
+
+    // Variáveis globais de estado
+    let carrinho = [];
+    let currentRating = 0, chartInstance = null;
+    let dadosPlanilhaBrutos = [], cabecalhosPlanilha = [], planilhaCarregada = false;
+    let dadosPlanilhaPublicidade = [], planilhaPublicidadeCarregada = false;
+    let pendingAction = null, pendingData = null;
+    let filaAguaData = []; // Cache da fila de água para PDF
+
+    // ========== FUNÇÕES UTILITÁRIAS ==========
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    async function apiGet(sheet) {
+      try {
+        const res = await fetch(`${API_BASE}?sheet=${sheet}`);
+        if (!res.ok) throw new Error(`Erro ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        console.warn(`apiGet falhou para ${sheet}:`, e);
+        return [];
+      }
+    }
+
+    async function apiPost(sheet, data) {
+      try {
+        const res = await fetch(`${API_BASE}?sheet=${sheet}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Array.isArray(data) ? data : [data])
+        });
+        return await res.json();
+      } catch (e) {
+        console.warn(`apiPost falhou para ${sheet}:`, e);
+        return { created: 0 };
+      }
+    }
+
+    // Função centralizada para capturar dados do formulário de água
+    function capturarDadosFormularioAgua() {
+      return {
+        nome: document.getElementById('aguaNome')?.value.trim() || '',
+        tel: document.getElementById('aguaTelefone')?.value.trim() || '',
+        email: document.getElementById('aguaEmail')?.value.trim() || '',
+        vinculo: document.getElementById('aguaVinculo')?.value || '',
+        setor: document.getElementById('aguaSetor')?.value.trim() || '',
+        local: document.getElementById('aguaLocal')?.value.trim() || 'Não informado',
+        mes: document.getElementById('aguaMesValidade')?.value || '',
+        ano: document.getElementById('aguaAnoValidade')?.value || ''
+      };
+    }
+
+    // Função centralizada para formatar validade
+    function formatarValidade(mes, ano) {
+      if (!mes || !ano) return '';
+      const mesesNomes = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+      return `${mesesNomes[parseInt(mes)-1]} / ${ano}`;
+    }
+
+    // Função centralizada para gerar mensagem WhatsApp
+    function gerarMensagemWhatsAppAgua(dados) {
+      const validade = formatarValidade(dados.mes, dados.ano);
+      return `💧 *NOVA SOLICITAÇÃO DE ÁGUA* %0A👤 *Solicitante:* ${dados.nome}%0A📞 *Telefone:* ${dados.tel}%0A📧 *E-mail:* ${dados.email}%0A🔗 *Vínculo:* ${dados.vinculo}%0A🏢 *Setor:* ${dados.setor}%0A📍 *Local:* ${dados.local}%0A📅 *Validade Garrafão:* ${validade || 'Não informada'}%0A🕒 *Data/Hora:* ${new Date().toLocaleString()}`;
+    }
+
+    // Função robusta para enviar WhatsApp
+    function enviarWhatsAppAgua(dados) {
+      const msg = gerarMensagemWhatsAppAgua(dados);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+      showToast('📱 WhatsApp aberto!');
+    }
+
+    // Envio assíncrono para API com retry e timeout
+    async function enviarParaAPIBackground(dados) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      try {
+        const validade = formatarValidade(dados.mes, dados.ano);
+        const payload = {
+          nome: dados.nome,
+          setor: dados.setor,
+          localizacao: dados.local,
+          whatsapp: dados.tel,
+          email: dados.email,
+          vinculo: dados.vinculo,
+          data_solicitacao: new Date().toISOString(),
+          validade_garrafao: validade,
+          status: 'pendente'
+        };
+
+        // Tentar até 2 vezes
+        let tentativas = 0;
+        let sucesso = false;
+        
+        while (tentativas < 2 && !sucesso) {
+          try {
+            const resp = await apiPost('agua_solicitacoes', payload);
+            if (resp?.created) {
+              sucesso = true;
+              console.log('✅ API: Solicitação de água registrada');
+            } else {
+              tentativas++;
+              if (tentativas < 2) await new Promise(r => setTimeout(r, 1000));
+            }
+          } catch (e) {
+            tentativas++;
+            if (tentativas < 2) await new Promise(r => setTimeout(r, 1000));
+          }
+        }
+      } catch (e) {
+        console.warn('⚠️ API falhou silenciosamente:', e.message);
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    function atualizarSaudacao() {
+      const hora = new Date().getHours();
+      let saudacao = hora < 12 ? 'Bom dia! 🌤️' : hora < 18 ? 'Boa tarde! ☀️' : 'Boa noite! 🌙';
+      const el = document.getElementById('dynamicGreeting');
+      if (el) el.textContent = `Olá, ${saudacao}`;
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function openModal(html) {
+      const modalContent = document.getElementById('modalContent');
+      if (modalContent) {
+        modalContent.innerHTML = html;
+        document.getElementById('modalOverlay').classList.add('active');
+        const closeBtn = modalContent.querySelector('.close-modal-btn');
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      }
+    }
+
+    // ========== NAVEGAÇÃO ==========
+    window.switchView = function(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      const targetView = document.getElementById(`view-${viewId}`);
+      if (targetView) targetView.classList.add('active');
+      
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === viewId);
+      });
+
+      if (viewId === 'publicidade') {
+        atualizarDashboard();
+        if (!planilhaPublicidadeCarregada) carregarPlanilhaPublicidade();
+        else renderizarTabelaPublicidade();
+        carregarFilaAgua();
+        atualizarMetricasPlanilha();
+      }
+      if (viewId === 'agua') {
+        carregarDadosAgua();
+      }
+      if (viewId === 'rastrear') {
+        if (!planilhaCarregada) carregarDadosPlanilha();
+        else renderizarTabelaPlanilha();
+      }
+      if (viewId === 'materiais') {
+        carregarSetoresCarrinho();
+      }
+    };
+
+    // ========== CARRINHO ==========
+    function carregarSetoresCarrinho() {
+      const select = document.getElementById('carrinhoSetorSelect');
+      if (!select) return;
+      select.innerHTML = '<option value="">Selecione o setor de destinação *</option>';
+      SETORES.sort().forEach(setor => {
+        const option = document.createElement('option');
+        option.value = setor;
+        option.textContent = setor;
+        select.appendChild(option);
+      });
+    }
+
+    function updateCartUI() {
+      const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+      const badge = document.getElementById('cartCountBadge');
+      if (badge) badge.textContent = total;
+      
+      const container = document.getElementById('cartItemsList');
+      if (!container) return;
+      if (!carrinho.length) {
+        container.innerHTML = '<p style="padding:20px;text-align:center;">Carrinho vazio</p>';
+        return;
+      }
+      container.innerHTML = carrinho.map((item, i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,255,255,0.6);border-radius:20px;margin-bottom:8px;">
+          <div style="flex:2;"><strong>${item.nome}</strong><br><small>${item.cod}</small></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button onclick="atualizarQuantidadeItem(${i},-1)">-</button>
+            <span style="min-width:30px;text-align:center;">${item.quantidade}</span>
+            <button onclick="atualizarQuantidadeItem(${i},1)">+</button>
+          </div>
+          <button onclick="removerDoCarrinho(${i})" style="background:none;border:none;color:#B91C1C;"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      `).join('');
+    }
+
+    window.addToCart = function(p) {
+      let existente = carrinho.find(i => i.cod === p.cod);
+      if (existente) existente.quantidade += 1;
+      else carrinho.push({ ...p, quantidade: 1 });
+      updateCartUI();
+      showToast(`🛒 ${p.nome} adicionado`);
+    };
+
+    window.removerDoCarrinho = function(i) {
+      carrinho.splice(i, 1);
+      updateCartUI();
+    };
+
+    window.atualizarQuantidadeItem = function(idx, delta) {
+      if (carrinho[idx]) {
+        carrinho[idx].quantidade = Math.max(1, carrinho[idx].quantidade + delta);
+        updateCartUI();
+      }
+    };
+
+    // ========== CONFIRMAÇÃO PRÉ-ENVIO ==========
+    function showConfirmacaoOverlay(action, data) {
+      pendingAction = action;
+      pendingData = data;
+      document.getElementById('confirmacaoOverlay').classList.add('active');
+    }
+
+    function hideConfirmacaoOverlay() {
+      document.getElementById('confirmacaoOverlay').classList.remove('active');
+      pendingAction = null;
+      pendingData = null;
+    }
+
+    window.finalizarPedido = function() {
+      const setor = document.getElementById('carrinhoSetorSelect')?.value;
+      const nome = document.getElementById('solicitanteNome')?.value.trim();
+      const tel = document.getElementById('solicitanteTelefone')?.value.trim();
+      const email = document.getElementById('solicitanteEmail')?.value.trim();
+      const vinculo = document.getElementById('solicitanteVinculo')?.value;
+      
+      if (!setor || !nome || !tel || !email || !vinculo) {
+        showToast('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      if (!carrinho.length) {
+        showToast('Carrinho vazio');
+        return;
+      }
+      
+      const dados = { setor, nome, tel, email, vinculo, itens: [...carrinho] };
+      showConfirmacaoOverlay('materiais', dados);
+      document.getElementById('cartDrawer').classList.remove('open');
+    };
+
+    async function executarEnvioMateriais(dados) {
+      const pedidos = dados.itens.map(i => ({
+        codigo: i.cod, descricao: i.nome, quantidade: i.quantidade,
+        setor: dados.setor, localizacao: "Almoxarifado CT",
+        data_hora: new Date().toISOString(), status: "pendente", tipo: "material",
+        nome_solicitante: dados.nome, telefone: dados.tel, email: dados.email, vinculo: dados.vinculo
+      }));
+      
+      let apiSuccess = false;
+      try {
+        const resp = await apiPost('pedidos', pedidos);
+        if (resp?.created) {
+          apiSuccess = true;
+          await apiPost('almoxarifado_copias', {
+            data_hora: new Date().toISOString(),
+            solicitante: dados.nome, telefone: dados.tel, email: dados.email, vinculo: dados.vinculo,
+            setor: dados.setor,
+            itens: JSON.stringify(dados.itens.map(i => ({ nome: i.nome, quantidade: i.quantidade }))),
+            mensagem: "Pedido registrado"
+          }).catch(e => console.warn);
+          showToast('✅ Pedido registrado na planilha!');
+        } else throw new Error("Resposta inválida da API");
+      } catch (err) {
+        console.error("Erro na API:", err);
+        showToast('⚠️ Falha ao registrar na planilha, mas o pedido será enviado por WhatsApp.');
+      }
+      
+      const msg = `🆕 *NOVO PEDIDO DE MATERIAIS* %0A👤 *Solicitante:* ${dados.nome}%0A📞 *Telefone:* ${dados.tel}%0A📧 *E-mail:* ${dados.email}%0A🔗 *Vínculo:* ${dados.vinculo}%0A🏢 *Setor:* ${dados.setor}%0A%0A📦 *Itens solicitados:*%0A${dados.itens.map(i => `➖ ${i.nome} (${i.cod}) - Qtd: ${i.quantidade}`).join('%0A')}%0A%0A🕒 *Data/Hora:* ${new Date().toLocaleString()}`;
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+      
+      carrinho = [];
+      updateCartUI();
+      if (!apiSuccess) showToast('📱 Pedido enviado apenas por WhatsApp.');
+    }
+
+    // ========== ÁGUA (REFATORADO) ==========
+    window.openAguaSolicitacaoModal = function() {
+      const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+      const anoAtual = new Date().getFullYear();
+      const anos = Array.from({length: 16}, (_, i) => anoAtual + i); // Até 2040
+      
+      const modalHTML = `
+        <div class="modal-agua-card">
+          <h3><i class="fas fa-water"></i> Solicitar Água</h3>
+          <div class="sub">Preencha os dados abaixo para solicitar água mineral</div>
+          <input type="text" id="aguaNome" placeholder="Nome completo *" autocomplete="off">
+          <input type="tel" id="aguaTelefone" placeholder="Telefone / WhatsApp *" autocomplete="off">
+          <input type="email" id="aguaEmail" placeholder="E-mail *" autocomplete="off">
+          <select id="aguaVinculo"><option value="">Vínculo *</option><option>Aluno</option><option>Professor</option><option>Técnico-Administrativo</option></select>
+          <div class="autocomplete-wrapper">
+            <input type="text" id="aguaSetor" placeholder="Setor / Laboratório *" autocomplete="off">
+            <div id="aguaSetorList" class="autocomplete-items" style="display:none;"></div>
+          </div>
+          <input type="text" id="aguaLocal" placeholder="Local específico (sala, bloco)" autocomplete="off">
+          <div class="mes-ano-group">
+            <select id="aguaMesValidade"><option value="">Mês</option>${meses.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}</select>
+            <select id="aguaAnoValidade"><option value="">Ano</option>${anos.map(a=>`<option value="${a}">${a}</option>`).join('')}</select>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-whatsapp" onclick="enviarSolicitacaoAguaWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar via WhatsApp</button>
+            <button class="btn btn-outline-modal close-modal-btn"><i class="fas fa-times"></i> Cancelar</button>
+          </div>
+        </div>
+      `;
+      openModal(modalHTML);
+      const setorInput = document.getElementById('aguaSetor');
+      const setorList = document.getElementById('aguaSetorList');
+      if(setorInput && setorList) setupAutocomplete(setorInput, setorList);
+    };
+
+    // NOVA FUNÇÃO: Envio direto via WhatsApp (principal)
+    window.enviarSolicitacaoAguaWhatsApp = function() {
+      const dados = capturarDadosFormularioAgua();
+      
+      // Validação
+      if (!dados.nome || !dados.tel || !dados.email || !dados.vinculo || !dados.setor) {
+        showToast('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      
+      // WhatsApp imediatamente
+      enviarWhatsAppAgua(dados);
+      
+      // API em background (não bloqueia)
+      enviarParaAPIBackground(dados).catch(e => console.warn('API background falhou'));
+      
+      // Fechar modal e atualizar
+      closeModal();
+      showToast('✅ Solicitação enviada!');
+      
+      // Recarregar dados da fila após 2 segundos
+      setTimeout(() => {
+        if (document.getElementById('view-agua').classList.contains('active')) {
+          carregarDadosAgua();
+        }
+      }, 2000);
+    };
+
+    // Mantida para compatibilidade com confirmação (se usada)
+    window.enviarSolicitacaoAgua = function() {
+      const dados = capturarDadosFormularioAgua();
+      
+      if (!dados.nome || !dados.tel || !dados.email || !dados.vinculo || !dados.setor) {
+        showToast('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      
+      closeModal();
+      showConfirmacaoOverlay('agua', dados);
+    };
+
+    async function executarEnvioAgua(dados) {
+      enviarWhatsAppAgua(dados);
+      await enviarParaAPIBackground(dados);
+      showToast('💧 Solicitação enviada!');
+    }
+
+    async function carregarDadosAgua() {
+      await carregarEstoqueAguaNova();
+      await carregarFilaAguaNova();
+    }
+
+    async function carregarEstoqueAguaNova() {
+      const container = document.getElementById('estoqueContent');
+      if(!container) return;
+      container.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-pulse"></i> Carregando estoque...</div>';
+      try {
+        const resp = await fetch(`${API_NOVA}?sheet=estoque_agua`);
+        const dados = await resp.json();
+        if(dados && dados.length) {
+          const ultimo = dados[dados.length-1];
+          const data = ultimo.DataRecebimento || ultimo.data || '';
+          const recebida = ultimo.QuantidadeRecebida || ultimo.quantidadeRecebida || 0;
+          const saidas = ultimo.Saidas || ultimo.saidas || 0;
+          const saldo = ultimo.Saldo || ultimo.saldo || (recebida - saidas);
+          container.innerHTML = `
+            <div class="estoque-grid">
+              <div class="estoque-item"><div class="estoque-label"><i class="far fa-calendar-alt"></i> Data Recebimento</div><div class="estoque-valor" style="font-size:1.2rem;">${formatarDataMesAno(data)}</div></div>
+              <div class="estoque-item"><div class="estoque-label"><i class="fas fa-arrow-down"></i> Recebida</div><div class="estoque-valor">${recebida}</div></div>
+              <div class="estoque-item"><div class="estoque-label"><i class="fas fa-arrow-up"></i> Saídas</div><div class="estoque-valor">${saidas}</div></div>
+              <div class="estoque-item"><div class="estoque-label"><i class="fas fa-cubes"></i> Saldo</div><div class="estoque-valor" style="color: var(--orange-primary);">${saldo}</div></div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = '<div class="estoque-grid"><div class="estoque-item" style="grid-column:span 4;">Nenhum dado de estoque</div></div>';
+        }
+      } catch(e) {
+        container.innerHTML = '<div class="estoque-grid"><div class="estoque-item" style="grid-column:span 4;">Erro ao carregar estoque</div></div>';
+      }
+    }
+
+    function formatarDataMesAno(isoString) {
+      if(!isoString) return '—';
+      try {
+        const d = new Date(isoString);
+        if(isNaN(d.getTime())) return isoString;
+        const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+        return `${meses[d.getMonth()]} / ${d.getFullYear()}`;
+      } catch { return isoString; }
+    }
+
+    async function carregarFilaAguaNova() {
+      const container = document.getElementById('filaAguaTableContainer');
+      if(!container) return;
+      container.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-pulse"></i> Carregando fila...</div>';
+      try {
+        const resp = await fetch(`${API_NOVA}?sheet=fila_agua`);
+        let dados = await resp.json();
+        if(dados && dados.length) {
+          filaAguaData = dados; // Cache para PDF
+          dados.sort((a,b) => (a.Solicitante || '').localeCompare(b.Solicitante || ''));
+          let html = `<table class="tabela-agua-moderna"><thead><tr><th>Solicitante</th><th>Setor</th><th>Local Entrega</th><th class="text-center">Qtd</th><th>Validade</th></tr></thead><tbody>`;
+          dados.forEach(item => {
+            html += `<tr><td>${item.Solicitante||'—'}</td><td>${item.Setor||'—'}</td><td>${item.Local_Entrega||'—'}</td><td class="text-center"><span class="badge-validade">${item.Quantidade||'1'}</span></td><td>${item.Validade||'—'}</td></tr>`;
+          });
+          html += `</tbody></table>`;
+          container.innerHTML = html;
+        } else {
+          filaAguaData = [];
+          container.innerHTML = '<div style="padding:20px;text-align:center;">Nenhuma solicitação na fila.</div>';
+        }
+      } catch(e) {
+        filaAguaData = [];
+        container.innerHTML = '<div style="padding:20px;text-align:center;">Erro ao carregar fila.</div>';
+      }
+    }
+
+    // ========== PDF CORRIGIDO ==========
+    window.gerarPDFRelatorioAgua = async function() {
+      try {
+        // Verificar se jsPDF está disponível
+        if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+          showToast('❌ Biblioteca PDF não carregada. Recarregue a página.');
+          return;
+        }
+        
+        const { jsPDF } = window.jspdf;
+        
+        // Usar dados do cache ou recarregar
+        let dadosParaPDF = filaAguaData;
+        if (!dadosParaPDF || dadosParaPDF.length === 0) {
+          // Tentar carregar novamente
+          showToast('📊 Carregando dados da fila...');
+          const resp = await fetch(`${API_NOVA}?sheet=fila_agua`);
+          dadosParaPDF = await resp.json();
+          filaAguaData = dadosParaPDF;
+        }
+        
+        if (!dadosParaPDF || dadosParaPDF.length === 0) {
+          showToast('❌ Nenhuma solicitação na fila para gerar PDF.');
+          return;
+        }
+        
+        // Criar PDF
+        const doc = new jsPDF();
+        
+        // Cabeçalho
+        doc.setFontSize(18);
+        doc.setTextColor(10, 47, 77);
+        doc.text('Fila de Solicitações - Água Mineral', 14, 20);
+        
+        doc.setFontSize(11);
+        doc.setTextColor(75, 85, 99);
+        doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
+        doc.text(`Total de solicitações: ${dadosParaPDF.length}`, 14, 38);
+        
+        // Preparar dados para a tabela
+        const tableData = dadosParaPDF.map(item => [
+          item.Solicitante || '—',
+          item.Setor || '—',
+          item.Local_Entrega || '—',
+          item.Quantidade || '1',
+          item.Validade || '—'
+        ]);
+        
+        // Usar autoTable
+        doc.autoTable({
+          head: [['Solicitante', 'Setor', 'Local Entrega', 'Qtd', 'Validade']],
+          body: tableData,
+          startY: 45,
+          styles: {
+            fontSize: 9,
+            cellPadding: 4,
+            textColor: [31, 41, 55]
+          },
+          headStyles: {
+            fillColor: [11, 59, 96],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold'
+          },
+          alternateRowStyles: {
+            fillColor: [248, 250, 254]
+          },
+          columnStyles: {
+            3: { halign: 'center' }
+          }
+        });
+        
+        // Rodapé
+        const pageCount = doc.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(128, 128, 128);
+          doc.text(`Almoxarifado CT - UFPB | Página ${i} de ${pageCount}`, doc.internal.pageSize.getWidth() - 30, doc.internal.pageSize.getHeight() - 10, { align: 'right' });
+        }
+        
+        // Download
+        doc.save(`fila-agua-${new Date().toISOString().slice(0,10)}.pdf`);
+        showToast('📄 PDF gerado com sucesso!');
+        
+      } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        showToast('❌ Erro ao gerar PDF. Tente novamente.');
+      }
+    };
+
+    // ========== CATEGORIAS DE MATERIAIS ==========
+    window.showCategory = function(cat) {
+      const container = document.getElementById('categoryContainer');
+      const title = document.getElementById('catTitle');
+      const aviso = document.getElementById('avisoLimpezaContainer');
+      const list = document.getElementById('productList');
+      if (!container || !title || !list) return;
+      
+      title.textContent = cat === 'aula' ? 'Aula' : cat === 'expediente' ? 'Expediente' : 'Limpeza';
+      aviso.innerHTML = cat === 'limpeza' ? '<div class="aviso-limpeza">Materiais exclusivos da equipe de Limpeza.</div>' : '';
+      const produtos = produtosData[cat] || [];
+      list.innerHTML = produtos.map(p => `
+        <div class="product-card">
+          <img src="${p.img}" class="product-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+          <div style="flex:1"><strong>${p.nome}</strong><br><small>${p.cod}</small></div>
+          <button class="btn" style="padding:10px 14px;" onclick='addToCart(${JSON.stringify(p).replace(/'/g,"&#39;")})'><i class="fas fa-plus"></i></button>
+        </div>
+      `).join('');
+      container.style.display = 'block';
+    };
+
+    // ========== PLANILHAS (RASTREAR E PUBLICIDADE) ==========
+    function parseCSV(csv) {
+      const linhas = csv.split(/\r?\n/);
+      if(linhas.length<2) return {cabecalho:[],dados:[]};
+      const cab = linhas[0].split(',').map(c => c.trim().replace(/^"|"$/g,''));
+      const dados = [];
+      for(let i=1; i<linhas.length; i++){
+        if(!linhas[i].trim()) continue;
+        const vals = [];
+        let aspas = false, atual = '';
+        for(let ch of linhas[i]){
+          if(ch==='"') aspas = !aspas;
+          else if(ch===','&&!aspas){ vals.push(atual); atual = ''; }
+          else atual += ch;
+        }
+        vals.push(atual);
+        if(vals.length >= cab.length){
+          const obj = {};
+          cab.forEach((k,idx) => { obj[k] = (vals[idx]||'').trim().replace(/^"|"$/g,''); });
+          dados.push(obj);
+        }
+      }
+      return {cabecalho:cab, dados};
+    }
+
+    async function carregarDadosPlanilha() {
+      const container = document.getElementById('tabelaPlanilhaContainer');
+      if(!container) return;
+      container.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div>';
+      try {
+        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-AKI_Bc7wstMKPRF4kv_F3pw73amu96S91vCKkBkRSPmpWICX4NYmVxYfensvcg/pub?gid=1177243728&single=true&output=csv';
+        const res = await fetch(url);
+        const txt = await res.text();
+        const {cabecalho, dados} = parseCSV(txt);
+        if(dados.length){
+          cabecalhosPlanilha = cabecalho;
+          dadosPlanilhaBrutos = dados.filter(l => !Object.values(l).every(v => !v || v.trim()==='')).reverse();
+          planilhaCarregada = true;
+          renderizarTabelaPlanilha();
+          atualizarMetricasPlanilha();
+        } else throw new Error();
+      } catch(e) {
+        container.innerHTML = '<div class="mensagem-erro">Erro ao carregar planilha.</div>';
+      }
+    }
+
+    function renderizarTabelaPlanilha() {
+      const container = document.getElementById('tabelaPlanilhaContainer');
+      const filtro = document.getElementById('filtroPlanilha');
+      if(!container || !planilhaCarregada) return;
+      let dados = dadosPlanilhaBrutos;
+      const termo = filtro?.value.trim().toLowerCase();
+      if(termo) dados = dadosPlanilhaBrutos.filter(l => Object.values(l).some(v => String(v).toLowerCase().includes(termo)));
+      if(!dados.length) { container.innerHTML = '<div class="sem-resultados">Nenhum resultado</div>'; return; }
+      
+      let html = '<div class="tabela-planilha-container"><table class="tabela-planilha"><thead><tr>';
+      cabecalhosPlanilha.slice(0, 5).forEach(c => html += `<th>${c}</th>`);
+      html += '<th>Ações</th></tr></thead><tbody>';
+      
+      dados.forEach((l, idx) => {
+        html += `<tr data-idx="${idx}" class="rastreio-row" style="cursor:pointer;">`;
+        cabecalhosPlanilha.slice(0, 5).forEach(c => html += `<td>${l[c]||''}</td>`);
+        html += `<td><i class="fas fa-chevron-down"></i></td></tr>`;
+        html += `<tr id="expand-${idx}" style="display:none;"><td colspan="6"><div class="rastreio-expand-row"></div></td></tr>`;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+      
+      document.querySelectorAll('.rastreio-row').forEach(tr => {
+        tr.addEventListener('click', (e) => {
+          const idx = tr.dataset.idx;
+          const expandRow = document.getElementById(`expand-${idx}`);
+          if (expandRow.style.display === 'none') {
+            exibirDetalhesMaterialModerno(dados[idx], expandRow.querySelector('.rastreio-expand-row'));
+            expandRow.style.display = 'table-row';
+            tr.querySelector('i').classList.remove('fa-chevron-down');
+            tr.querySelector('i').classList.add('fa-chevron-up');
+          } else {
+            expandRow.style.display = 'none';
+            tr.querySelector('i').classList.remove('fa-chevron-up');
+            tr.querySelector('i').classList.add('fa-chevron-down');
+          }
+        });
+      });
+    }
+
+    function exibirDetalhesMaterialModerno(linha, container) {
+      const detalhes = [];
+      cabecalhosPlanilha.forEach(c => {
+        if (linha[c] && linha[c].trim()) {
+          detalhes.push({ label: c, value: linha[c] });
+        }
+      });
+      
+      let html = '<div class="rastreio-detail-grid">';
+      detalhes.slice(0, 8).forEach(d => {
+        html += `
+          <div class="rastreio-detail-item">
+            <div class="rastreio-detail-label">${d.label}</div>
+            <div class="rastreio-detail-value">${d.value}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      if (detalhes.length > 8) {
+        html += '<div style="margin-top: 16px;"><button class="edu-saiba-mais" onclick="verTodosDetalhes(' + JSON.stringify(linha).replace(/"/g, '&quot;') + ')">Ver todos os detalhes</button></div>';
+      }
+      
+      container.innerHTML = html;
+    }
+
+    window.verTodosDetalhes = function(linha) {
+      let html = '<div style="max-height: 500px; overflow-y: auto;">';
+      cabecalhosPlanilha.forEach(c => {
+        if (linha[c] && linha[c].trim()) {
+          html += `<div style="margin-bottom: 16px;"><strong>${c}:</strong><br>${linha[c]}</div>`;
+        }
+      });
+      html += '</div><button class="btn close-modal-btn" style="margin-top: 20px; width: 100%;">Fechar</button>';
+      openModal(html);
+    };
+
+    async function carregarPlanilhaPublicidade() {
+      const container = document.getElementById('tabelaPlanilhaPublicidade');
+      if(!container) return;
+      container.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div>';
+      try {
+        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-AKI_Bc7wstMKPRF4kv_F3pw73amu96S91vCKkBkRSPmpWICX4NYmVxYfensvcg/pub?gid=1177243728&single=true&output=csv';
+        const res = await fetch(url);
+        const txt = await res.text();
+        const {cabecalho, dados} = parseCSV(txt);
+        if(dados.length){
+          cabecalhosPlanilha = cabecalho;
+          dadosPlanilhaPublicidade = dados.filter(l => !Object.values(l).every(v => !v || v.trim()==='')).reverse();
+          planilhaPublicidadeCarregada = true;
+          renderizarTabelaPublicidade();
+          atualizarMetricasPlanilha();
+        } else throw new Error();
+      } catch(e) {
+        container.innerHTML = '<div class="mensagem-erro">Erro ao carregar planilha.</div>';
+      }
+    }
+
+    function renderizarTabelaPublicidade() {
+      const container = document.getElementById('tabelaPlanilhaPublicidade');
+      const filtro = document.getElementById('filtroPlanilhaPublicidade');
+      if(!container || !planilhaPublicidadeCarregada) return;
+      let dados = dadosPlanilhaPublicidade;
+      const termo = filtro?.value.trim().toLowerCase();
+      if(termo) dados = dadosPlanilhaPublicidade.filter(l => Object.values(l).some(v => String(v).toLowerCase().includes(termo)));
+      if(!dados.length) { container.innerHTML = '<div class="sem-resultados">Nenhum resultado</div>'; return; }
+      let html = '<div class="tabela-planilha-container"><table class="tabela-planilha"><thead><tr>';
+      cabecalhosPlanilha.slice(0, 5).forEach(c => html += `<th>${c}</th>`);
+      html += '</tr></thead><tbody>';
+      dados.forEach((l, idx) => {
+        html += `<tr data-idx="${idx}">`;
+        cabecalhosPlanilha.slice(0, 5).forEach(c => html += `<td>${l[c]||''}</td>`);
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function atualizarMetricasPlanilha() {
+      const dados = dadosPlanilhaBrutos.length ? dadosPlanilhaBrutos : dadosPlanilhaPublicidade;
+      if(!dados.length) return;
+      const totalEntrada = dados.length;
+      const colDest = cabecalhosPlanilha.find(c => c.toLowerCase().includes('destinat')) || cabecalhosPlanilha[2];
+      const saidaPerm = dados.filter(linha => linha[colDest] && linha[colDest].trim() !== '').length;
+      document.getElementById('entradaPerm').innerText = totalEntrada;
+      document.getElementById('saidaPerm').innerText = saidaPerm;
+      apiGet('pedidos').then(pedidos => {
+        const expedienteCount = pedidos.filter(p => p.tipo==='material').length;
+        document.getElementById('saidaExpediente').innerText = expedienteCount;
+      }).catch(() => document.getElementById('saidaExpediente').innerText = '--');
+    }
+
+    async function carregarFilaAgua() {
+      const container = document.getElementById('filaAguaContainer');
+      if(!container) return;
+      container.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-pulse"></i> Carregando...</div>';
+      try {
+        const agua = await apiGet('agua_solicitacoes');
+        const pendentes = agua.filter(a => a.status==='pendente');
+        if(!pendentes.length) { container.innerHTML = '<div class="sem-resultados">Nenhuma solicitação pendente.</div>'; return; }
+        let html = '<div style="max-height:300px; overflow-y:auto;">';
+        pendentes.forEach(a => {
+          html += `<div class="fila-item"><strong><i class="fas fa-water"></i> Água</strong><br>📌 Setor: ${a.setor||'N/I'}<br>📍 Destino: ${a.localizacao||a.setor||'N/I'}<br>👤 Solicitante: ${a.nome||'N/I'}<br>⏰ Hora: ${new Date(a.data_solicitacao).toLocaleString()}</div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } catch(e) {
+        container.innerHTML = '<div class="mensagem-erro">Erro ao carregar fila.</div>';
+      }
+    }
+
+    window.baixarPDFFilaAgua = function() { 
+      gerarPDFRelatorioAgua();
+    };
+    window.baixarPDFPlanilhaPublicidade = function() { showToast('📄 PDF da planilha gerado (simulação).'); };
+    window.baixarPDFRastrear = function() { showToast('📄 PDF de rastreamento gerado (simulação).'); };
+
+    // ========== DASHBOARD ==========
+    window.atualizarDashboard = async function() {
+      const pedidos = await apiGet('pedidos');
+      const itensCount = {};
+      pedidos.forEach(p => { const desc = p.descricao||''; if(desc) itensCount[desc] = (itensCount[desc]||0)+(parseInt(p.quantidade)||1); });
+      const top = Object.entries(itensCount).sort((a,b) => b[1]-a[1]).slice(0,5);
+      const list = document.getElementById('topItensList');
+      if(list) list.innerHTML = top.map(([desc,qtd]) => `<li>${desc} - ${qtd} un.</li>`).join('');
+      
+      const setores = {};
+      pedidos.forEach(p => { setores[p.setor] = (setores[p.setor]||0)+1; });
+      const labels = Object.keys(setores).slice(0,5);
+      const values = labels.map(l => setores[l]);
+      if(chartInstance) chartInstance.destroy();
+      const ctx = document.getElementById('consumoChart')?.getContext('2d');
+      if(ctx) chartInstance = new Chart(ctx, { type:'bar', data:{ labels, datasets:[{ label:'Pedidos por setor', data:values, backgroundColor:'#FF7A00', borderRadius:10 }] }, options:{ responsive:true } });
+      atualizarMetricasPlanilha();
+    };
+
+    // ========== OUVIDORIA ==========
+    window.enviarOuvidoria = async function() {
+      const desc = document.getElementById('ouvDesc')?.value.trim();
+      if(!desc) { showToast('Descrição obrigatória'); return; }
+      const logEntry = {
+        acao:'ouvidoria', data_hora:new Date().toISOString(),
+        usuario: document.getElementById('ouvNome')?.value.trim()||'Anônimo',
+        detalhes: `Setor: ${document.getElementById('ouvSetor')?.value||''} | Rating: ${currentRating} | ${desc}`
+      };
+      const resp = await apiPost('log', logEntry);
+      if(resp?.created) { showToast('Manifestação enviada!'); document.getElementById('ouvDesc').value = ''; }
+      else showToast('Erro ao enviar');
+    };
+
+    // ========== AUTOCOMPLETE ==========
+    function setupAutocomplete(input, listContainer) {
+      if(!input || !listContainer) return;
+      input.addEventListener('input', () => {
+        const val = input.value.toLowerCase();
+        const filtered = SETORES.filter(s => s.toLowerCase().includes(val));
+        listContainer.innerHTML = filtered.map(s => `<div class="autocomplete-item">${s}</div>`).join('');
+        listContainer.style.display = filtered.length && val ? 'block' : 'none';
+        listContainer.querySelectorAll('.autocomplete-item').forEach(el => {
+          el.addEventListener('click', () => { input.value = el.textContent; listContainer.style.display = 'none'; });
+        });
+      });
+      document.addEventListener('click', (e) => { if(!input.contains(e.target)) listContainer.style.display = 'none'; });
+    }
+
+    // ========== CARROSSEL ==========
+    function initEduCarousel() {
+      const slides = [
+        { img: "https://media.licdn.com/dms/image/v2/D4D12AQH4TJ_gz6deRA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1725130568748?e=2147483647&v=beta&t=JW2rYLujXDDK9EVhaGTQlhUsqzQRpvjSEm5n6ZJFTKE", title: "Você sabe qual é a função do Almoxarifado?", short: "O material não chega até você por acaso — existe todo um processo por trás.", full: "O almoxarifado é o setor responsável por receber os materiais comprados, conferir as notas fiscais, armazenar adequadamente os itens e distribuí-los conforme as solicitações dos setores. Além disso, mantém o controle do estoque para garantir que não faltem materiais essenciais para o funcionamento da instituição. O almoxarifado do CT trabalha exclusivamente com materiais de consumo, como expediente, limpeza e itens de aula." },
+        { img: "https://waqarmart.pk/public/uploads/all/10/2022/Feb/fVwe3NyQ5KhJzuyABzTFIny71g18ZUn2DBwzVmH8.jpg", title: "Material Permanente x Expediente: você sabe a diferença?", short: "Entender essa diferença ajuda no uso e controle correto dos materiais.", full: "Os materiais utilizados no dia a dia da instituição são classificados em duas categorias principais: Material de Consumo (Expediente) e Material Permanente. O material de consumo é aquele que sofre desgaste ou é consumido rapidamente, como papel, canetas, produtos de limpeza. O material permanente tem durabilidade superior a dois anos e não perde suas características com o uso, como mesas, cadeiras, computadores. O almoxarifado do CT gerencia apenas materiais de consumo. Materiais permanentes são controlados pelo setor de Patrimônio." },
+        { img: "https://observatorio3setor.org.br/wp-content/uploads/2018/10/1-mulher-mexendo-celular.jpg", title: "Quem pode solicitar Materiais no Almoxarifado?", short: "Nem todo mundo pode solicitar materiais — existe um fluxo definido para isso.", full: "A solicitação de materiais ao almoxarifado deve ser realizada pelos setores administrativos, laboratórios, coordenações de curso e departamentos acadêmicos do Centro de Tecnologia. Cada setor possui um responsável designado que pode fazer as solicitações. Alunos e professores que necessitem de materiais para atividades específicas devem solicitar através do seu laboratório ou coordenação de curso, que fará o pedido formal ao almoxarifado." },
+        { img: "https://trssistemas.com.br/wp-content/uploads/2022/09/4-dicas-para-melhorar-o-setor-de-compras-da-sua-empresa-BLOG.webp",title: "Como comprar materiais para os setores", short: "Seu pedido passa por várias etapas antes de chegar ao almoxarifado.", full: "O processo de compra de materiais começa com o planejamento dos próprios setores, que devem prever suas necessidades anuais. Essas demandas são consolidadas e encaminhadas para a administração do CT, que avalia a disponibilidade orçamentária. Após aprovação, o setor de compras da UFPB realiza o processo licitatório. Quando os materiais chegam, são recebidos e conferidos pelo almoxarifado, que então comunica aos setores que já podem solicitar os itens." },
+        { img: "https://aguamineralhydrate.com.br/wp-content/uploads/2016/01/Distribuidora-Agua-Mineral-Brasilia-DF.jpg", title: "Fornecimento de água", short: "O fornecimento de água segue um fluxo organizado.", full: "A entrega de água mineral funciona por meio de um processo simples: os setores solicitam através do aplicativo, informando a quantidade necessária e o local de entrega. O almoxarifado consolida os pedidos e organiza a distribuição. É importante lembrar que a troca dos garrafões vazios é obrigatória para receber novos. Mantenha os garrafões vazios em local acessível para facilitar a coleta pela equipe de distribuição." }
+      ];
+      const slidesContainer = document.getElementById('eduCarouselSlides');
+      const dotsContainer = document.getElementById('eduCarouselDots');
+      let current = 0, timer;
+      function build() {
+        slidesContainer.innerHTML = slides.map((s, i) => `
+          <div class="edu-carousel-slide">
+            <img class="edu-carousel-img" src="${s.img}" onerror="this.src='https://placehold.co/600x400?text=Imagem'">
+            <div class="edu-carousel-content">
+              <div class="edu-carousel-title">${s.title}</div>
+              <div class="edu-carousel-text">${s.short}</div>
+              <button class="edu-saiba-mais" data-idx="${i}">Saiba mais</button>
+            </div>
+          </div>
+        `).join('');
+        dotsContainer.innerHTML = slides.map((_, i) => `<div class="edu-dot ${i===current?'active':''}" data-dot="${i}"></div>`).join('');
+        document.querySelectorAll('.edu-saiba-mais').forEach(btn => btn.addEventListener('click', (e) => {
+          const idx = btn.dataset.idx;
+          openModal(`
+            <div style="background:white;border-radius:32px;padding:24px;max-width:500px;">
+              <h3 style="color:var(--ufpb-deep);margin-bottom:16px;">${slides[idx].title}</h3>
+              <p style="line-height:1.6;color:var(--gray-600);">${slides[idx].full}</p>
+              <button class="btn close-modal-btn" style="margin-top:20px;width:100%;">Fechar</button>
+            </div>
+          `);
+        }));
+        document.querySelectorAll('.edu-dot').forEach(dot => dot.addEventListener('click', () => { goTo(parseInt(dot.dataset.dot)); resetTimer(); }));
+      }
+      function goTo(i) { current = i; slidesContainer.style.transform = `translateX(-${current*100}%)`; document.querySelectorAll('.edu-dot').forEach((d,idx) => d.classList.toggle('active', idx===current)); }
+      function startTimer() { if(timer) clearInterval(timer); timer = setInterval(() => { goTo((current+1)%slides.length); }, 6000); }
+      function resetTimer() { clearInterval(timer); startTimer(); }
+      build(); goTo(0); startTimer();
+    }
+
+    // ========== INICIALIZAÇÃO ==========
+    function init() {
+      const splash = document.getElementById('splash');
+      const welcome = document.getElementById('welcome-screen');
+      const app = document.getElementById('app');
+      const btnEntrar = document.getElementById('btnEntrarApp');
+      
+      setTimeout(() => {
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+          splash.style.display = 'none';
+          welcome.classList.add('active');
+        }, 600);
+      }, 4000);
+      
+      btnEntrar.addEventListener('click', () => {
+        welcome.classList.remove('active');
+        app.classList.add('visible');
+        atualizarSaudacao();
+        initEduCarousel();
+        carregarSetoresCarrinho();
+      });
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
+      });
+
+      document.getElementById('cartToggleBtn').addEventListener('click', () => {
+        document.getElementById('cartDrawer').classList.add('open');
+      });
+      document.getElementById('closeCartBtn').addEventListener('click', () => {
+        document.getElementById('cartDrawer').classList.remove('open');
+      });
+
+      document.getElementById('closeCatBtn').addEventListener('click', () => {
+        document.getElementById('categoryContainer').style.display = 'none';
+      });
+
+      document.getElementById('modalOverlay').addEventListener('click', (e) => {
+        if(e.target === document.getElementById('modalOverlay')) closeModal();
+      });
+
+      setupAutocomplete(document.getElementById('ouvSetor'), document.getElementById('setorAutocompleteList'));
+
+      document.getElementById('confirmarEnvioBtn').addEventListener('click', async () => {
+        if(pendingAction === 'materiais') await executarEnvioMateriais(pendingData);
+        else if(pendingAction === 'agua') await executarEnvioAgua(pendingData);
+        hideConfirmacaoOverlay();
+      });
+      document.getElementById('falarWhatsappBtn').addEventListener('click', () => {
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
+      });
+      document.getElementById('cancelarConfirmacaoBtn').addEventListener('click', hideConfirmacaoOverlay);
+
+      document.querySelectorAll('.star').forEach(s => s.addEventListener('click', function() {
+        currentRating = this.dataset.value;
+        document.querySelectorAll('.star').forEach((st, i) => { st.textContent = i < currentRating ? '★' : '☆'; });
+      }));
+
+      document.getElementById('helpBtn').addEventListener('click', () => {
+        openModal(`<div style="background:white;border-radius:32px;padding:20px;"><h3>Ajuda</h3><p>Use o menu inferior para navegar entre as seções do aplicativo. Em caso de dúvidas, entre em contato pelo WhatsApp.</p><button class="btn close-modal-btn">Fechar</button></div>`);
+      });
+
+      document.getElementById('filtroPlanilhaPublicidade')?.addEventListener('input', () => { if(planilhaPublicidadeCarregada) renderizarTabelaPublicidade(); });
+      document.getElementById('filtroPlanilha')?.addEventListener('input', () => { if(planilhaCarregada) renderizarTabelaPlanilha(); });
+
+      updateCartUI();
+    }
+
+    window.onload = init;
+  })();
+</script>
+</body>
+</html>
